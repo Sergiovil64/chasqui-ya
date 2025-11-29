@@ -75,6 +75,17 @@ class HttpService {
     );
   }
 
+  // PATCH
+  Future<http.Response> patch(String endpoint, {dynamic body}) async {
+    final uri = Uri.parse('$baseUrl$endpoint');
+    final headers = await _authHeaders;
+    return await http.patch(
+      uri,
+      headers: headers,
+      body: body != null ? jsonEncode(body) : null,
+    );
+  }
+
   // DELETE
   Future<http.Response> delete(String endpoint) async {
     final uri = Uri.parse('$baseUrl$endpoint');
