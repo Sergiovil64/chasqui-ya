@@ -1,5 +1,6 @@
 import 'package:chasqui_ya/config/app_theme.dart';
-import 'package:chasqui_ya/ui/restaurant/restaurant_home_screen.dart';
+// import 'package:chasqui_ya/ui/restaurant/restaurant_home_screen.dart';
+import 'package:chasqui_ya/ui/customer/client_home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,7 +20,8 @@ class MainApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       // home: const RestaurantHomeScreen(),
-      home: Scaffold(body: Center(child: Text('Hello World!'))),
+      home: const ClientHomeScreen(),
+      //home: Scaffold(body: Center(child: Text('Hello World!'))),
     );
   }
 }
