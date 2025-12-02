@@ -1,3 +1,4 @@
+import 'package:chasqui_ya/aplication/customer/cart_provider.dart';
 import 'package:chasqui_ya/aplication/customer/restaurant_menu_provider.dart';
 import 'package:chasqui_ya/config/app_theme.dart';
 import 'package:chasqui_ya/data/models/menu_item_model.dart';
@@ -223,7 +224,19 @@ class RestaurantDetailScreen extends ConsumerWidget {
                         ...entry.value.map(
                           (item) => Padding(
                             padding: const EdgeInsets.only(bottom: 12),
-                            child: MenuItemCard(item: item),
+                            child: MenuItemCard(
+                              item: item,
+                              onAddToCart: () {
+                                ref.read(cartProvider.notifier).addItem(item, restaurant);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('${item.name} agregado al carrito'),
+                                    duration: const Duration(seconds: 2),
+                                    backgroundColor: AppTheme.primaryRed,
+                                  ),
+                                );
+                              },
+                            ),
                           ),
                         ),
                       ],

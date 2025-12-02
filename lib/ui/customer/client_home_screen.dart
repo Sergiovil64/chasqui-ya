@@ -1,6 +1,8 @@
+import 'package:chasqui_ya/aplication/customer/cart_provider.dart';
 import 'package:chasqui_ya/aplication/customer/customer_provider.dart';
 import 'package:chasqui_ya/config/app_theme.dart';
 import 'package:chasqui_ya/ui/customer/restaurant_detail_screen.dart';
+import 'package:chasqui_ya/ui/customer/widgets/cart_bottom_sheet.dart';
 import 'package:chasqui_ya/ui/customer/widgets/restaurant_card.dart';
 import 'package:chasqui_ya/ui/widgets/empty_state_widget.dart';
 import 'package:flutter/material.dart';
@@ -56,6 +58,29 @@ class _ClientHomeScreenState extends ConsumerState<ClientHomeScreen> {
             ),
           ],
         ),
+        actions: [
+          Consumer(
+            builder: (context, ref, child) {
+              final cartState = ref.watch(cartProvider);
+              return Badge(
+                isLabelVisible: cartState.totalItems > 0,
+                label: Text('${cartState.totalItems}'),
+                child: IconButton(
+                  icon: const Icon(Icons.shopping_cart_rounded),
+                  onPressed: () {
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      builder: (_) => const CartBottomSheet(),
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+          const SizedBox(width: 8),
+        ],
         elevation: 0,
       ),
       body: RefreshIndicator(
