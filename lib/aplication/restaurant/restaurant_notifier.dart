@@ -4,7 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class RestaurantNotifier extends StateNotifier<RestaurantState> {
   RestaurantNotifier()
-      : super(const RestaurantState(
+    : super(
+        const RestaurantState(
           restaurant: Restaurant(
             id: 1,
             name: 'Restaurante El Sabor',
@@ -16,7 +17,8 @@ class RestaurantNotifier extends StateNotifier<RestaurantState> {
             imageUrl: 'https://example.com/image.jpg',
             isActive: true,
           ),
-        ));
+        ),
+      );
 
   void updateRestaurant({
     required String name,

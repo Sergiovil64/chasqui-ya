@@ -1,14 +1,14 @@
 class ApiResponse<T> {
   final bool success;
-  final String message;
+  final String? message;
   final T? data;
-  final Map<String, dynamic>? errors;
+  final String? error;
 
   ApiResponse({
     required this.success,
-    required this.message,
+    this.message,
     this.data,
-    this.errors,
+    this.error,
   });
 
   factory ApiResponse.fromJson(
@@ -17,15 +17,16 @@ class ApiResponse<T> {
   ) {
     return ApiResponse<T>(
       success: json['success'] ?? false,
-      message: json['message'] ?? '',
+      message: json['message'],
       data:
           json['data'] != null && fromJsonT != null
               ? fromJsonT(json['data'])
               : json['data'],
-      errors: json['errors'],
+      error: json['error'],
     );
   }
 
   bool get isSuccess => success;
-  bool get hasErrors => errors != null && errors!.isNotEmpty;
+  bool get hasError => error != null && error!.isNotEmpty;
+  String get errorMessage => error ?? message ?? 'Error desconocido';
 }
