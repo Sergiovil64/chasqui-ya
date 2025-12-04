@@ -1,4 +1,5 @@
 import 'package:chasqui_ya/aplication/auth/auth_notifier.dart';
+import 'package:chasqui_ya/ui/customer/client_home_screen.dart';
 import 'package:chasqui_ya/ui/restaurant/restaurant_home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -48,11 +49,8 @@ class _LoginUIState extends ConsumerState<LoginUI> {
               homeScreen = const RestaurantHomeScreen();
               break;
             case 'cliente':
-              //homeScreen = const RestaurantHomeScreen(); PANTALLA PRINCIPAL CLIENTE
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Vista de cliente en desarrollo')),
-              );
-              return;
+              homeScreen = const ClientHomeScreen();
+              break;
             case 'repartidor':
               // homeScreen = const RestaurantHomeScreen();  PANTALLA PRINCIPAL REPARTIDOR
               ScaffoldMessenger.of(context).showSnackBar(
