@@ -106,13 +106,54 @@ class HttpService {
   // Parsear respuesta JSON
   Map<String, dynamic> parseResponse(http.Response response) {
     if (response.body.isEmpty) {
-      return {};
+      return {'success': false, 'error': 'Respuesta vacía del servidor'};
     }
-    return jsonDecode(response.body) as Map<String, dynamic>;
+    try {
+      return jsonDecode(response.body) as Map<String, dynamic>;
+    } catch (e) {
+      return {'success': false, 'error': 'Error al parsear respuesta: $e'};
+    }
   }
 
   // Verificar si la respuesta es exitosa
   bool isSuccessful(http.Response response) {
     return response.statusCode >= 200 && response.statusCode < 300;
+  }
+
+  // Manejar errores HTTP basados en códigos de estado
+  Map<String, dynamic> handleHttpError(http.Response response) {
+    final body = parseResponse(response);
+
+    // Si el body ya tiene el formato de error de la API, usarlo
+    if (body.containsKey('success') && body['success'] == false) {
+      return body;
+    }
+
+    // Crear respuesta de error basada en código de estado
+    String errorMessage;
+    switch (response.statusCode) {
+      case 400:
+        errorMessage = body['error'] ?? 'Solicitud inválida';
+        break;
+      case 401:
+        errorMessage = body['error'] ?? 'No autorizado';
+        break;
+      case 403:
+        errorMessage = body['error'] ?? 'Acceso denegado';
+        break;
+      case 404:
+        errorMessage = body['error'] ?? 'Recurso no encontrado';
+        break;
+      case 500:
+        errorMessage = body['error'] ?? 'Error interno del servidor';
+        break;
+      default:
+        errorMessage = body['error'] ?? 'Error en la solicitud';
+    }
+
+    return {
+      'success': false,
+      'error': errorMessage,
+    };
   }
 }
