@@ -25,14 +25,28 @@ class Restaurant {
     return Restaurant(
       id: json['id'] as int,
       name: json['name'] as String,
-      userId: json['user_id'] as String,
-      description: json['description'] as String,
-      address: json['address'] as String,
-      latitude: json['latitude'] as double,
-      longitude: json['longitude'] as double,
-      imageUrl: json['image_url'] as String,
-      isActive: json['is_active'] as bool,
+      // user_id viene como int desde la API, pero el modelo lo espera como String
+      // TODO: Evaluar cambiar userId a int para coincidir con la BD
+      userId: (json['user_id'] as num).toString(),
+      // Campos opcionales según la BD (description, image_url pueden ser null)
+      description: json['description'] as String? ?? '',
+      address: json['address'] as String? ?? '',
+      // latitude y longitude pueden venir como String o num desde la API
+      latitude: _parseDouble(json['latitude']),
+      longitude: _parseDouble(json['longitude']),
+      imageUrl: json['image_url'] as String? ?? '',
+      isActive: json['is_active'] as bool? ?? true,
     );
+  }
+
+  // Método auxiliar para parsear double desde String o num
+  static double _parseDouble(dynamic value) {
+    if (value == null) return 0.0;
+    if (value is num) return value.toDouble();
+    if (value is String) {
+      return double.tryParse(value) ?? 0.0;
+    }
+    return 0.0;
   }
 
   Map<String, dynamic> toJson() {

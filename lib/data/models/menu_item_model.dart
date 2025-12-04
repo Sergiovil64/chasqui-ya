@@ -24,12 +24,24 @@ class MenuItem {
       id: json['id'] as int,
       restaurantId: json['restaurant_id'] as int,
       name: json['name'] as String,
-      description: json['description'] as String,
-      price: json['price'] as double,
-      imageUrl: json['image_url'] as String,
-      category: json['category'] as String,
-      isAvailable: json['is_available'] as bool,
+      // Campos opcionales según la BD (description, image_url, category pueden ser null)
+      description: json['description'] as String? ?? '',
+      // price puede venir como String o num desde la API
+      price: _parseDouble(json['price']),
+      imageUrl: json['image_url'] as String? ?? '',
+      category: json['category'] as String? ?? 'Sin categoría',
+      isAvailable: json['is_available'] as bool? ?? true,
     );
+  }
+
+  // Método auxiliar para parsear double desde String o num
+  static double _parseDouble(dynamic value) {
+    if (value == null) return 0.0;
+    if (value is num) return value.toDouble();
+    if (value is String) {
+      return double.tryParse(value) ?? 0.0;
+    }
+    return 0.0;
   }
 
   Map<String, dynamic> toJson() {

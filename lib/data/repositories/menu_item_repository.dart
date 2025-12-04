@@ -62,25 +62,52 @@ class MenuItemRepository {
   /// Items disponibles (is_available=true) de un restaurante
   Future<List<MenuItem>> getAvailableByRestaurantId(int restaurantId) async {
     try {
+      print('🔍 [MenuItemRepository] Obteniendo menú desde: /api/menu_items/restaurant/$restaurantId/available');
       final response = await _httpService
           .get('/api/menu_items/restaurant/$restaurantId/available');
 
+      print('📡 [MenuItemRepository] Status Code: ${response.statusCode}');
+      print('📦 [MenuItemRepository] Response Body: ${response.body}');
+
       if (_httpService.isSuccessful(response)) {
         final jsonData = _httpService.parseResponse(response);
+        print('✅ [MenuItemRepository] Respuesta exitosa. Estructura: ${jsonData.keys}');
+        
+        // Log del primer item para ver estructura
+        if (jsonData['data'] != null && (jsonData['data'] as List).isNotEmpty) {
+          final firstItem = (jsonData['data'] as List).first;
+          print('📋 [MenuItemRepository] Primer item: $firstItem');
+        }
+
         final apiResponse = ApiResponse.fromJson(
           jsonData,
           (data) => (data as List)
               .map(
-                (json) => MenuItem.fromJson(json as Map<String, dynamic>),
+                (json) {
+                  try {
+                    return MenuItem.fromJson(json as Map<String, dynamic>);
+                  } catch (e) {
+                    print('❌ [MenuItemRepository] Error parseando item: $e');
+                    print('❌ [MenuItemRepository] JSON problemático: $json');
+                    rethrow;
+                  }
+                },
               )
               .toList(),
         );
 
-        return apiResponse.data ?? [];
+        final items = apiResponse.data ?? [];
+        print('🍽️ [MenuItemRepository] Items parseados exitosamente: ${items.length}');
+        return items;
+      } else {
+        print('❌ [MenuItemRepository] Error en respuesta: ${response.statusCode}');
+        final errorData = _httpService.handleHttpError(response);
+        print('❌ [MenuItemRepository] Error: ${errorData['error']}');
+        return [];
       }
-      return [];
-    } catch (e) {
-      print('Error getting available menu items by restaurant: $e');
+    } catch (e, stackTrace) {
+      print('💥 [MenuItemRepository] Excepción al obtener menú: $e');
+      print('💥 [MenuItemRepository] StackTrace: $stackTrace');
       return [];
     }
   }

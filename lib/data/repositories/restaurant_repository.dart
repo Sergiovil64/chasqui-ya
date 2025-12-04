@@ -5,28 +5,56 @@ import 'package:chasqui_ya/data/models/restaurant_model.dart';
 class RestaurantRepository {
   final HttpService _httpService = HttpService();
 
-  /// GET /api/restaurants
+  /// GET /api/restaurants-complete
   /// Obtener todos los restaurantes
   Future<List<Restaurant>> getAll() async {
     try {
-      final response = await _httpService.get('/api/restaurants');
+      print('🔍 [RestaurantRepository] Obteniendo restaurantes desde: /api/restaurants-complete');
+      final response = await _httpService.get('/api/restaurants-complete');
+
+      print('📡 [RestaurantRepository] Status Code: ${response.statusCode}');
+      print('📦 [RestaurantRepository] Response Body: ${response.body}');
 
       if (_httpService.isSuccessful(response)) {
         final jsonData = _httpService.parseResponse(response);
+        print('✅ [RestaurantRepository] Respuesta exitosa. Estructura: ${jsonData.keys}');
+        
+        // Log del primer item para ver estructura
+        if (jsonData['data'] != null && (jsonData['data'] as List).isNotEmpty) {
+          final firstItem = (jsonData['data'] as List).first;
+          print('📋 [RestaurantRepository] Primer restaurante: $firstItem');
+          print('📋 [RestaurantRepository] Tipo de user_id: ${firstItem['user_id'].runtimeType}');
+        }
+
         final apiResponse = ApiResponse.fromJson(
           jsonData,
           (data) => (data as List)
               .map(
-                (json) => Restaurant.fromJson(json as Map<String, dynamic>),
+                (json) {
+                  try {
+                    return Restaurant.fromJson(json as Map<String, dynamic>);
+                  } catch (e) {
+                    print('❌ [RestaurantRepository] Error parseando restaurante: $e');
+                    print('❌ [RestaurantRepository] JSON problemático: $json');
+                    rethrow;
+                  }
+                },
               )
               .toList(),
         );
 
-        return apiResponse.data ?? [];
+        final restaurants = apiResponse.data ?? [];
+        print('🍽️ [RestaurantRepository] Restaurantes parseados exitosamente: ${restaurants.length}');
+        return restaurants;
+      } else {
+        print('❌ [RestaurantRepository] Error en respuesta: ${response.statusCode}');
+        final errorData = _httpService.handleHttpError(response);
+        print('❌ [RestaurantRepository] Error: ${errorData['error']}');
+        return [];
       }
-      return [];
-    } catch (e) {
-      print('Error getting restaurants: $e');
+    } catch (e, stackTrace) {
+      print('💥 [RestaurantRepository] Excepción al obtener restaurantes: $e');
+      print('💥 [RestaurantRepository] StackTrace: $stackTrace');
       return [];
     }
   }
