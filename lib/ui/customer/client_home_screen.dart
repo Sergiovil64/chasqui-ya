@@ -1,6 +1,8 @@
+import 'package:chasqui_ya/aplication/auth/auth_notifier.dart';
 import 'package:chasqui_ya/aplication/customer/cart_provider.dart';
 import 'package:chasqui_ya/aplication/customer/customer_provider.dart';
 import 'package:chasqui_ya/config/app_theme.dart';
+import 'package:chasqui_ya/ui/auth/login_ui.dart';
 import 'package:chasqui_ya/ui/customer/restaurant_detail_screen.dart';
 import 'package:chasqui_ya/ui/customer/widgets/cart_bottom_sheet.dart';
 import 'package:chasqui_ya/ui/customer/widgets/restaurant_card.dart';
@@ -31,6 +33,40 @@ class _ClientHomeScreenState extends ConsumerState<ClientHomeScreen> {
   void dispose() {
     _searchController.dispose();
     super.dispose();
+  }
+
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text('Cerrar sesión'),
+          content: const Text('¿Estás seguro de que deseas cerrar sesión?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(dialogContext).pop();
+                await ref.read(authNotifierProvider.notifier).logout();
+                if (mounted) {
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (_) => const LoginUI()),
+                    (route) => false,
+                  );
+                }
+              },
+              style: TextButton.styleFrom(
+                foregroundColor: AppTheme.errorRed,
+              ),
+              child: const Text('Cerrar sesión'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -78,6 +114,11 @@ class _ClientHomeScreenState extends ConsumerState<ClientHomeScreen> {
                 ),
               );
             },
+          ),
+          IconButton(
+            icon: const Icon(Icons.logout_rounded),
+            tooltip: 'Cerrar sesión',
+            onPressed: () => _showLogoutDialog(context),
           ),
           const SizedBox(width: 8),
         ],

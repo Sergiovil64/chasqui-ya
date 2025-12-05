@@ -2,6 +2,7 @@ import 'package:chasqui_ya/aplication/customer/cart_provider.dart';
 import 'package:chasqui_ya/config/app_theme.dart';
 import 'package:chasqui_ya/data/models/cart_item_model.dart';
 import 'package:chasqui_ya/data/models/restaurant_model.dart';
+import 'package:chasqui_ya/ui/customer/checkout_screen.dart';
 import 'package:chasqui_ya/ui/customer/restaurant_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -176,10 +177,12 @@ class CartDetailScreen extends ConsumerWidget {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Funcionalidad en desarrollo'),
-                            duration: Duration(seconds: 2),
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => CheckoutScreen(
+                              restaurant: restaurant,
+                              cartItems: cartItems,
+                            ),
                           ),
                         );
                       },
