@@ -1,5 +1,6 @@
 import 'package:chasqui_ya/aplication/auth/auth_notifier.dart';
 import 'package:chasqui_ya/ui/customer/client_home_screen.dart';
+import 'package:chasqui_ya/ui/delivery_driver/delivery_driver_home_screen.dart';
 import 'package:chasqui_ya/ui/restaurant/restaurant_home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -52,13 +53,8 @@ class _LoginUIState extends ConsumerState<LoginUI> {
               homeScreen = const ClientHomeScreen();
               break;
             case 'repartidor':
-              // homeScreen = const RestaurantHomeScreen();  PANTALLA PRINCIPAL REPARTIDOR
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Vista de repartidor en desarrollo'),
-                ),
-              );
-              return;
+              homeScreen = const DeliveryDriverHomeScreen();
+              break;
             default:
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Rol de usuario no reconocido')),

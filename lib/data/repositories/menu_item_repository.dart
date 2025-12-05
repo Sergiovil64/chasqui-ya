@@ -5,11 +5,11 @@ import 'package:chasqui_ya/data/models/menu_item_model.dart';
 class MenuItemRepository {
   final HttpService _httpService = HttpService();
 
-  /// GET /api/menu_items
+  /// GET /api/menu-items
   /// Lista todos los items del menu con nombre del restaurante
   Future<List<MenuItem>> getAll() async {
     try {
-      final response = await _httpService.get('/api/menu_items');
+      final response = await _httpService.get('/api/menu-items');
 
       if (_httpService.isSuccessful(response)) {
         final jsonData = _httpService.parseResponse(response);
@@ -31,12 +31,12 @@ class MenuItemRepository {
     }
   }
 
-  /// GET /api/menu_items/restaurant/:restaurant_id
+  /// GET /api/menu-items/restaurant/:restaurant_id
   /// Items de un restaurante, ordenados por categoria y nombre
   Future<List<MenuItem>> getByRestaurantId(int restaurantId) async {
     try {
       final response =
-          await _httpService.get('/api/menu_items/restaurant/$restaurantId');
+          await _httpService.get('/api/menu-items/restaurant/$restaurantId');
 
       if (_httpService.isSuccessful(response)) {
         final jsonData = _httpService.parseResponse(response);
@@ -58,12 +58,12 @@ class MenuItemRepository {
     }
   }
 
-  /// GET /api/menu_items/restaurant/:restaurant_id/available
+  /// GET /api/menu-items/restaurant/:restaurant_id/available
   /// Items disponibles (is_available=true) de un restaurante
   Future<List<MenuItem>> getAvailableByRestaurantId(int restaurantId) async {
     try {
       final response = await _httpService
-          .get('/api/menu_items/restaurant/$restaurantId/available');
+          .get('/api/menu-items/restaurant/$restaurantId/available');
 
       if (_httpService.isSuccessful(response)) {
         final jsonData = _httpService.parseResponse(response);
@@ -71,25 +71,31 @@ class MenuItemRepository {
           jsonData,
           (data) => (data as List)
               .map(
-                (json) => MenuItem.fromJson(json as Map<String, dynamic>),
+                (json) {
+                  try {
+                    return MenuItem.fromJson(json as Map<String, dynamic>);
+                  } catch (e) {
+                    rethrow;
+                  }
+                },
               )
               .toList(),
         );
 
         return apiResponse.data ?? [];
+      } else {
+        return [];
       }
-      return [];
     } catch (e) {
-      print('Error getting available menu items by restaurant: $e');
       return [];
     }
   }
 
-  /// GET /api/menu_items/category/:category
+  /// GET /api/menu-items/category/:category
   /// Items disponibles de una categoria con nombre del restaurante
   Future<List<MenuItem>> getByCategory(String category) async {
     try {
-      final response = await _httpService.get('/api/menu_items/category/$category');
+      final response = await _httpService.get('/api/menu-items/category/$category');
 
       if (_httpService.isSuccessful(response)) {
         final jsonData = _httpService.parseResponse(response);
@@ -111,11 +117,11 @@ class MenuItemRepository {
     }
   }
 
-  /// GET /api/menu_items/:id
+  /// GET /api/menu-items/:id
   /// Detalle de un item con datos y direccion del restaurante
   Future<MenuItem?> getById(int id) async {
     try {
-      final response = await _httpService.get('/api/menu_items/$id');
+      final response = await _httpService.get('/api/menu-items/$id');
 
       if (_httpService.isSuccessful(response)) {
         final jsonData = _httpService.parseResponse(response);
@@ -134,13 +140,13 @@ class MenuItemRepository {
     }
   }
 
-  /// POST /api/menu_items
+  /// POST /api/menu-items
   /// Crea un item del menú
 
   Future<MenuItem?> create(Map<String, dynamic> menuItemData) async {
     try {
       final response = await _httpService.post(
-        '/api/menu_items',
+        '/api/menu-items',
         body: menuItemData,
       );
 
@@ -161,7 +167,7 @@ class MenuItemRepository {
     }
   }
 
-  /// PUT /api/menu_items/:id
+  /// PUT /api/menu-items/:id
   /// Actualiza campos de un item
 
   Future<MenuItem?> update(
@@ -170,7 +176,7 @@ class MenuItemRepository {
   ) async {
     try {
       final response = await _httpService.put(
-        '/api/menu_items/$id',
+        '/api/menu-items/$id',
         body: menuItemData,
       );
 
@@ -191,13 +197,13 @@ class MenuItemRepository {
     }
   }
 
-  /// PATCH /api/menu_items/:id/availability
+  /// PATCH /api/menu-items/:id/availability
   /// Cambia is_available de un item
 
   Future<MenuItem?> updateAvailability(int id, bool isAvailable) async {
     try {
       final response = await _httpService.patch(
-        '/api/menu_items/$id/availability',
+        '/api/menu-items/$id/availability',
         body: {'is_available': isAvailable},
       );
 
@@ -218,11 +224,11 @@ class MenuItemRepository {
     }
   }
 
-  /// DELETE /api/menu_items/:id
+  /// DELETE /api/menu-items/:id
   /// Elimina un item por ID
   Future<bool> delete(int id) async {
     try {
-      final response = await _httpService.delete('/api/menu_items/$id');
+      final response = await _httpService.delete('/api/menu-items/$id');
       return _httpService.isSuccessful(response);
     } catch (e) {
       print('Error deleting menu item: $e');

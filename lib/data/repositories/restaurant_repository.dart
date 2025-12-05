@@ -5,11 +5,11 @@ import 'package:chasqui_ya/data/models/restaurant_model.dart';
 class RestaurantRepository {
   final HttpService _httpService = HttpService();
 
-  /// GET /api/restaurants
+  /// GET /api/restaurants-complete
   /// Obtener todos los restaurantes
   Future<List<Restaurant>> getAll() async {
     try {
-      final response = await _httpService.get('/api/restaurants');
+      final response = await _httpService.get('/api/restaurants-complete');
 
       if (_httpService.isSuccessful(response)) {
         final jsonData = _httpService.parseResponse(response);
@@ -17,16 +17,22 @@ class RestaurantRepository {
           jsonData,
           (data) => (data as List)
               .map(
-                (json) => Restaurant.fromJson(json as Map<String, dynamic>),
+                (json) {
+                  try {
+                    return Restaurant.fromJson(json as Map<String, dynamic>);
+                  } catch (e) {
+                    rethrow;
+                  }
+                },
               )
               .toList(),
         );
 
         return apiResponse.data ?? [];
+      } else {
+        return [];
       }
-      return [];
     } catch (e) {
-      print('Error getting restaurants: $e');
       return [];
     }
   }

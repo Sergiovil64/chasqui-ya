@@ -11,7 +11,6 @@ class RestaurantMenuNotifier extends StateNotifier<RestaurantMenuState> {
   Future<void> loadMenuItems(int restaurantId) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      // Usar endpoint real: /api/menu_items/restaurant/:restaurant_id/available
       final items =
           await _repository.getAvailableByRestaurantId(restaurantId);
       state = state.copyWith(
